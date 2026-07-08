@@ -1,4 +1,4 @@
-package ru.itis.shop.user.domain;
+package task5.shop.user.domain;
 
 public class User {
 

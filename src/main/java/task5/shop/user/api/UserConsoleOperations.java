@@ -1,7 +1,9 @@
-package ru.itis.shop.user.api;
+package task5.shop.user.api;
 
-import ru.itis.shop.user.application.UserService;
+import task5.shop.user.application.UserService;
+import task5.shop.user.domain.User;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class UserConsoleOperations {
@@ -28,6 +30,10 @@ public class UserConsoleOperations {
                 signIn();
             }
             break;
+            case "6": {
+                findAllByProfileDescription();
+            }
+            break;
             case "0": {
                 System.exit(0);
             }
@@ -38,6 +44,7 @@ public class UserConsoleOperations {
         System.out.println("1. Регистрация пользователя");
         System.out.println("2. Вход в систему");
         System.out.println("3. Найти пользователя по id");
+        System.out.println("6. Показать информацию о пользователях с заданным profileDescription");
         System.out.println("0. Выход");
     }
 
@@ -67,6 +74,30 @@ public class UserConsoleOperations {
             System.out.println("Вы вошли в приложение");
         } else {
             System.out.println("Email или пароль не верны");
+        }
+    }
+
+    private void findAllByProfileDescription() {
+        System.out.println("Ввежите свой profileDescription");
+        String profileDescription = scanner.nextLine();
+
+
+        List<User> foundUsers = userService.findAllByProfileDescription(profileDescription);
+
+        if (foundUsers.isEmpty()) {
+            System.out.println("Пользователи с profileDescription '" + profileDescription + "' не найдены");
+        } else {
+
+            System.out.println("Список пользователей с profileDescription '" + profileDescription + "':");
+            for (User user : foundUsers) {
+                System.out.println("ID: " + user.getId());
+                System.out.println("Имя: " + user.getName());
+                System.out.println("Email: " + user.getEmail());
+                System.out.println();
+
+                // или просто System.out.println(user);
+            }
+            System.out.println();
         }
     }
 

@@ -1,4 +1,4 @@
-package ru.itis.shop.infrastructure.persistence.jdbs;
+package task5.shop.infrastructure.persistence.jdbs;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;

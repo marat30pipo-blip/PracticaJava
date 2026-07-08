@@ -1,6 +1,6 @@
-package ru.itis.shop.user.repository;
+package task5.shop.user.repository;
 
-import ru.itis.shop.user.domain.User;
+import task5.shop.user.domain.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,4 +14,6 @@ public interface UserRepository {
     Optional<User> findById(Integer id);
 
     List<User> findAll();
+
+    List<User> findAllByProfileDescription(String profileDescription);
 }

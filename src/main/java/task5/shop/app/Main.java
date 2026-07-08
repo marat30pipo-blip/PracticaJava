@@ -1,10 +1,10 @@
-package ru.itis.shop.app;
+package task5.shop.app;
 
-import ru.itis.shop.infrastructure.persistence.jdbs.DriverManagerDataSource;
-import ru.itis.shop.user.api.UserConsoleOperations;
-import ru.itis.shop.user.application.UserService;
-import ru.itis.shop.user.infrastructure.persistence.jdbc.UserRepositoryJdbcImpl;
-import ru.itis.shop.user.repository.UserRepository;
+import task5.shop.infrastructure.persistence.jdbs.DriverManagerDataSource;
+import task5.shop.user.api.UserConsoleOperations;
+import task5.shop.user.application.UserService;
+import task5.shop.user.infrastructure.persistence.jdbc.UserRepositoryJdbcImpl;
+import task5.shop.user.repository.UserRepository;
 
 import javax.sql.DataSource;
 
@@ -14,13 +14,12 @@ public class Main {
         DataSource dataSource = new DriverManagerDataSource("jdbc:postgresql://localhost:5432/shop_db",
                 "postgres", "IV2007@$");
         UserRepository userRepository = new UserRepositoryJdbcImpl(dataSource);
-        System.out.println(userRepository.findAll());
-        //UserService userService = new UserService(userRepository);
+        UserService userService = new UserService(userRepository);
 
-        //UserConsoleOperations operations = new UserConsoleOperations(userService);
+        UserConsoleOperations operations = new UserConsoleOperations(userService);
 
-//        while (true) {
-//            operations.showMenu();
-//        }
+        while (true) {
+            operations.showMenu();
+        }
     }
 }
