@@ -1,14 +1,11 @@
-package task5.shop.user.infrastructure.persistence.jdbc;
+package task6.shop.user.infrastructure.persistence.jdbc;
 
-import task5.shop.infrastructure.persistence.jdbs.RowMapper;
-import task5.shop.user.domain.User;
-import task5.shop.user.repository.UserRepository;
+import task6.shop.infrastructure.persistence.jdbs.RowMapper;
+import task6.shop.user.domain.User;
+import task6.shop.user.repository.UserRepository;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,13 +15,12 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     private final DataSource dataSource;
 
     private final RowMapper<User> userRowMapper = row -> new User(
-                    row.getInt("id"),
-                    row.getString("name"),
-                    row.getString("email"),
-                    row.getString("password"),
-                    row.getString("profileDescription")
+            row.getInt("id"),
+            row.getString("name"),
+            row.getString("email"),
+            row.getString("password"),
+            row.getString("profileDescription")
     );
-
 
     public UserRepositoryJdbcImpl(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -32,53 +28,124 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
     @Override
     public void save(User user) {
+        String sql = "INSERT INTO account (name, email, password, profileDescription) VALUES (?, ?, ?, ?)";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setString(4, user.getProfileDescription());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Ошибка при сохранении пользователя", e);
+        }
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
+        String sql = "SELECT * FROM account WHERE email = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, email);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(userRowMapper.mapRow(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Ошибка при поиске пользователя по email", e);
+        }
+
         return Optional.empty();
     }
 
     @Override
     public Optional<User> findById(Integer id) {
+        String sql = "SELECT * FROM account WHERE id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, id);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(userRowMapper.mapRow(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Ошибка при поиске пользователя по id", e);
+        }
+
         return Optional.empty();
+    }
+
+    @Override
+    public boolean updateProfileDescription(String email, String newProfileDescription) {
+        String sql = "UPDATE account SET profileDescription = ? WHERE email = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, newProfileDescription);
+            preparedStatement.setString(2, email);
+
+            int updatedRows = preparedStatement.executeUpdate();
+            return updatedRows > 0;
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Ошибка при обновлении описания профиля", e);
+        }
     }
 
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()){
-            try (Statement statement = connection.createStatement()){
-                try (ResultSet resultSet = statement.executeQuery("select * from account")) {
-                    while (resultSet.next()) {
-                        users.add(userRowMapper.mapRow(resultSet));
+        String sql = "SELECT * FROM account ORDER BY id";
 
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
 
-                    }
-                }
+            while (resultSet.next()) {
+                users.add(userRowMapper.mapRow(resultSet));
             }
+
         } catch (SQLException e) {
-            throw  new IllegalStateException(e);
+            throw new IllegalStateException("Ошибка при получении всех пользователей", e);
         }
+
         return users;
     }
 
+    @Override
     public List<User> findAllByProfileDescription(String profileDescription) {
         List<User> users = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()){
-            try (Statement statement = connection.createStatement()){
-                String sql = "SELECT * from account where profileDescription = '" + profileDescription + "'";
-                try (ResultSet resultSet = statement.executeQuery(sql)) {
-                    while (resultSet.next()) {
-                        users.add(userRowMapper.mapRow(resultSet));
-                    }
+        String sql = "SELECT * FROM account WHERE profileDescription = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, profileDescription);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(userRowMapper.mapRow(resultSet));
                 }
             }
-        } catch (SQLException e) {
-            throw new IllegalStateException(e);
-        }
-        return users  ;
-    }
 
+        } catch (SQLException e) {
+            throw new IllegalStateException("Ошибка при поиске пользователей по описанию профиля", e);
+        }
+
+        return users;
+    }
 }

@@ -1,4 +1,4 @@
-package task5.shop.user.domain;
+package task6.shop.user.domain;
 
 public class User {
 
@@ -6,10 +6,9 @@ public class User {
     private String name;
     private String email;
     private String password;
-
     private String profileDescription;
 
-    public User(Integer id,String name, String email, String password, String profileDescription) {
+    public User(Integer id, String name, String email, String password, String profileDescription) {
         this.id = id;
         this.email = email;
         this.name = name;

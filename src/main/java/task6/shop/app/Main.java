@@ -1,10 +1,10 @@
-package task5.shop.app;
+package task6.shop.app;
 
-import task5.shop.infrastructure.persistence.jdbs.DriverManagerDataSource;
-import task5.shop.user.api.UserConsoleOperations;
-import task5.shop.user.application.UserService;
-import task5.shop.user.infrastructure.persistence.jdbc.UserRepositoryJdbcImpl;
-import task5.shop.user.repository.UserRepository;
+import task6.shop.infrastructure.persistence.jdbs.DriverManagerDataSource;
+import task6.shop.user.api.UserConsoleOperations;
+import task6.shop.user.application.UserService;
+import task6.shop.user.infrastructure.persistence.jdbc.UserRepositoryJdbcImpl;
+import task6.shop.user.repository.UserRepository;
 
 import javax.sql.DataSource;
 

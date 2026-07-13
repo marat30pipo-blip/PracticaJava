@@ -1,6 +1,6 @@
-package task5.shop.user.repository;
+package task6.shop.user.repository;
 
-import task5.shop.user.domain.User;
+import task6.shop.user.domain.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +12,8 @@ public interface UserRepository {
     Optional<User> findByEmail(String email);
 
     Optional<User> findById(Integer id);
+
+    boolean updateProfileDescription(String email, String newProfileDescription);
 
     List<User> findAll();
 

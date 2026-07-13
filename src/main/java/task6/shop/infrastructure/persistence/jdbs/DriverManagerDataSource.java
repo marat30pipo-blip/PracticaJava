@@ -1,4 +1,4 @@
-package task5.shop.infrastructure.persistence.jdbs;
+package task6.shop.infrastructure.persistence.jdbs;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -14,7 +14,7 @@ public class DriverManagerDataSource implements DataSource {
     private final String dbUser;
     private final String dbPassword;
 
-    public DriverManagerDataSource(String dbUrl,  String dbUser, String dbPassword) {
+    public DriverManagerDataSource(String dbUrl, String dbUser, String dbPassword) {
         this.dbUrl = dbUrl;
         this.dbPassword = dbPassword;
         this.dbUser = dbUser;
@@ -34,13 +34,9 @@ public class DriverManagerDataSource implements DataSource {
         try {
             connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throw new RuntimeException("Ошибка подключения к базе данных", e);
         }
-
     }
-
-
-
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
